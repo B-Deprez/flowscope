@@ -1,5 +1,6 @@
 import spartan as st
 from sklearn.metrics import roc_auc_score, average_precision_score
+import pandas as pd
 
 def flowscope_synthetic(string_name):
     # load graph data
@@ -50,22 +51,21 @@ def flowscope_synthetic(string_name):
     # Calculate the AUC-ROC and AUC-PR
     AUC_ROC = roc_auc_score(label_data['laundering'], label_data['score'])
     AUC_PR = average_precision_score(label_data['laundering'], label_data['score'])
-    print("====", string_name, "====")
-    print('AUC-ROC: ', AUC_ROC)
-    print('AUC-PR: ', AUC_PR)
-    print("==========================")
+    return AUC_ROC, AUC_PR
 
 ## Run the FlowScope algorithm on the synthetic data
 
-n_nodes_list = [200]#[100, 10000, 100000] # Number of nodes in the graph
-m_edges_list = [2]#[1, 2, 5] # Number of edges to attach from a new node to existing nodes
-p_edges_list = [0.01]#[0.001, 0.01] # Probability of adding an edge between two nodes
+n_nodes_list = [100, 10000, 100000] # Number of nodes in the graph
+m_edges_list = [1, 2, 5] # Number of edges to attach from a new node to existing nodes
+p_edges_list = [0.001, 0.01] # Probability of adding an edge between two nodes
 generation_method_list = [
     'Barabasi-Albert', 
     'Erdos-Renyi', 
     'Watts-Strogatz'
     ] # Generation method for the graph
-n_patterns_list = [3]#[3, 5] # Number of smurfing patterns to add
+n_patterns_list = [3, 5] # Number of smurfing patterns to add
+
+results_all = dict()
 
 for n_nodes in n_nodes_list:
     for n_patterns in n_patterns_list:
@@ -76,18 +76,24 @@ for n_nodes in n_nodes_list:
                     for m_edges in m_edges_list:
                         string_name = 'synthetic_' + generation_method + '_'  + str(n_nodes) + '_' + str(m_edges) + '_' + str(p_edges) + '_' + str(n_patterns)
                         print("====", string_name, "====")
-                        flowscope_synthetic(string_name)
+                        result_int = flowscope_synthetic(string_name)
+                        results_all[string_name] = result_int
 
                 if generation_method == 'Erdos-Renyi':
                     m_edges = 0
                     for p_edges in p_edges_list:
                         string_name = 'synthetic_' + generation_method + '_'  + str(n_nodes) + '_' + str(m_edges) + '_' + str(p_edges) + '_' + str(n_patterns)
                         print("====", string_name, "====")
-                        flowscope_synthetic(string_name)
+                        result_int = flowscope_synthetic(string_name)
+                        results_all[string_name] = result_int
 
                 if generation_method == 'Watts-Strogatz':
                     for m_edges in m_edges_list:
                         for p_edges in p_edges_list:
                             string_name = 'synthetic_' + generation_method + '_'  + str(n_nodes) + '_' + str(m_edges) + '_' + str(p_edges) + '_' + str(n_patterns)
                             print("====", string_name, "====")
-                            flowscope_synthetic(string_name)
+                            result_int = flowscope_synthetic(string_name)
+                            results_all[string_name] = result_int
+
+results_df = pd.DataFrame(results_all)
+results_df.to_csv("synthetic_flowscope_"+str_supervised+"_"+str_directed+"_combined.csv")
