@@ -49,9 +49,15 @@ def flowscope_synthetic(string_name):
     label_data['score'] = label_data['score'].fillna(0)
 
     # Calculate the AUC-ROC and AUC-PR
-    AUC_ROC = roc_auc_score(label_data['laundering'], label_data['score'])
-    AUC_PR = average_precision_score(label_data['laundering'], label_data['score'])
-    return AUC_ROC, AUC_PR
+    columns = ['laundering', 'separate', 'new_mules', 'existing_mules']
+    results = dict()
+
+    for column in columns:
+        AUC_ROC = roc_auc_score(label_data[column], label_data['score'])
+        AUC_PR = average_precision_score(label_data[column], label_data['score'])
+        results[column] = [AUC_ROC, AUC_PR]
+    
+    return results
 
 ## Run the FlowScope algorithm on the synthetic data
 
@@ -96,4 +102,4 @@ for n_nodes in n_nodes_list:
                             results_all[string_name] = result_int
 
 results_df = pd.DataFrame(results_all)
-results_df.to_csv("synthetic_flowscope_"+str_supervised+"_"+str_directed+"_combined.csv")
+results_df.to_csv("synthetic_flowscope_combined.csv")
