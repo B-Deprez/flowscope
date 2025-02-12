@@ -1,10 +1,11 @@
 import spartan as st
 from sklearn.metrics import roc_auc_score, average_precision_score
 import pandas as pd
+import numpy as np
 
 def flowscope_synthetic(string_name):
     # load graph data
-    transaction_data = pd.read_csv("./inputData/raw/processed/edge_data_"+string_name+".csv")
+    transaction_data = pd.read_csv("./inputData/synthetic/raw/edge_data_"+string_name+".csv")
     fs1_tensor_data = st.loadTensor(path = "./inputData/synthetic/processed/edge_data_"+string_name+".csv", header=None)
     fs2_tensor_data = st.loadTensor(path = "./inputData/synthetic/processed/edge_data_"+string_name+".csv", header=None)
 
@@ -60,7 +61,6 @@ def flowscope_synthetic(string_name):
     return results
 
 ## Run the FlowScope algorithm on the synthetic data
-
 n_nodes_list = [100, 10000, 100000] # Number of nodes in the graph
 m_edges_list = [1, 2, 5] # Number of edges to attach from a new node to existing nodes
 p_edges_list = [0.001, 0.01] # Probability of adding an edge between two nodes
