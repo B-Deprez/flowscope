@@ -4,7 +4,7 @@ import pandas as pd
 
 def flowscope_synthetic(string_name):
     # load graph data
-    transaction_data = pd.read_csv('inputData/synthetic/raw/edge_data_synthetic.csv')
+    transaction_data = pd.read_csv("./inputData/raw/processed/edge_data_"+string_name+".csv")
     fs1_tensor_data = st.loadTensor(path = "./inputData/synthetic/processed/edge_data_"+string_name+".csv", header=None)
     fs2_tensor_data = st.loadTensor(path = "./inputData/synthetic/processed/edge_data_"+string_name+".csv", header=None)
 
