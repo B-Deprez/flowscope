@@ -2,9 +2,11 @@ import spartan as st
 from sklearn.metrics import roc_auc_score, average_precision_score
 import pandas as pd
 import numpy as np
+import timeit
 
 def flowscope_synthetic(string_name):
     # load graph data
+    start = timeit.default_timer()
     transaction_data = pd.read_csv("./inputData/synthetic/raw/edge_data_"+string_name+".csv")
     fs1_tensor_data = st.loadTensor(path = "./inputData/synthetic/processed/edge_data_"+string_name+".csv", header=None)
     fs2_tensor_data = st.loadTensor(path = "./inputData/synthetic/processed/edge_data_"+string_name+".csv", header=None)
@@ -43,6 +45,10 @@ def flowscope_synthetic(string_name):
                 map_scores[d_list[j]]= (3-i)/3
             laundering+=d_list
             number_list.append(i)
+    stop = timeit.default_timer()
+    calculation_time = stop - start
+    with open("synthetic_flowscope_time.txt", "a") as f:
+        f.write(string_name + " " + str(calculation_time) + "\n")
 
     label_data = pd.read_csv('./inputData/synthetic/raw/label_data_'+string_name+'.csv')
     label_data['node'] = label_data.index
